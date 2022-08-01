@@ -20,7 +20,7 @@ const NETWORK_API_URLS = {
 
 const CONNECTION_EVENT = 'ledger-connection-change'
 
-class LedgerBridgeKeyring extends EventEmitter {
+class LedgerBridgeKeyring2 extends EventEmitter {
   constructor (opts = {}) {
     super()
     this.accountDetails = {}
@@ -647,5 +647,5 @@ class LedgerBridgeKeyring extends EventEmitter {
 
 }
 
-LedgerBridgeKeyring.type = type
-module.exports = LedgerBridgeKeyring
+LedgerBridgeKeyring2.type = type
+module.exports = LedgerBridgeKeyring2
