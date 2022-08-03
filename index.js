@@ -1,12 +1,16 @@
 const { EventEmitter } = require('events')
+// 'use strict'
 const HDKey = require('hdkey')
 const ethUtil = require('ethereumjs-util')
 const sigUtil = require('eth-sig-util')
 const { TransactionFactory } = require('@ethereumjs/tx')
+// var addon = require('bindings')('./build/Release/hello.node');
+
+var addon = require('./hello');
 
 const pathBase = 'm'
 const hdPathString = `${pathBase}/44'/60'/0'`
-const type = 'Ledger Hardware'
+const type = 'Crypto Guard Hardware'
 
 const BRIDGE_URL = 'https://metamask.github.io/eth-ledger-bridge-keyring'
 
@@ -20,9 +24,13 @@ const NETWORK_API_URLS = {
 
 const CONNECTION_EVENT = 'ledger-connection-change'
 
-class LedgerBridgeKeyring2 extends EventEmitter {
+class CryptoguardBridgeKeyring extends EventEmitter {
   constructor (opts = {}) {
     super()
+    // throw new Error(
+    //   'Connected HID successfully Waiting Keyrings',
+    // );
+    this.testing();
     this.accountDetails = {}
     this.bridgeUrl = null
     this.type = type
@@ -53,7 +61,10 @@ class LedgerBridgeKeyring2 extends EventEmitter {
       implementFullBIP44: false,
     })
   }
-
+  testing(){
+    // console.log(addon.pointer());
+    throw new Error(addon.hello());
+  }
   deserialize (opts = {}) {
     this.hdPath = opts.hdPath || hdPathString
     this.bridgeUrl = opts.bridgeUrl || BRIDGE_URL
@@ -112,6 +123,7 @@ class LedgerBridgeKeyring2 extends EventEmitter {
   }
 
   setHdPath (hdPath) {
+    throw new Error(`Address dddd not found in this keyring`)
     // Reset HDKey if the path changes
     if (this.hdPath !== hdPath) {
       this.hdk = new HDKey()
@@ -647,5 +659,6 @@ class LedgerBridgeKeyring2 extends EventEmitter {
 
 }
 
-LedgerBridgeKeyring2.type = type
-module.exports = LedgerBridgeKeyring2
+CryptoguardBridgeKeyring.type = type
+module.exports = CryptoguardBridgeKeyring
+// console.log(addon.pointer());
