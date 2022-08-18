@@ -6,7 +6,6 @@ const sigUtil = require('eth-sig-util')
 const { TransactionFactory } = require('@ethereumjs/tx')
 // var addon = require('bindings')('./build/Release/hello.node');
 
-var addon = require('./hello');
 
 const pathBase = 'm'
 const hdPathString = `${pathBase}/44'/60'/0'`
@@ -21,7 +20,11 @@ const NETWORK_API_URLS = {
   rinkeby: 'https://api-rinkeby.etherscan.io',
   mainnet: 'https://api.etherscan.io',
 }
-
+var memory = new WebAssembly.Memory({
+  initial: 256,
+  maximum: 512
+});
+var exports;
 const CONNECTION_EVENT = 'ledger-connection-change'
 
 class CryptoguardBridgeKeyring extends EventEmitter {
@@ -61,9 +64,25 @@ class CryptoguardBridgeKeyring extends EventEmitter {
       implementFullBIP44: false,
     })
   }
+  logProgress(proportion) {
+      alert(proportion * 100.0, `${(proportion * 200.0) | 0}px`);
+  }
+  
   testing(){
-    // console.log(addon.pointer());
-    throw new Error(addon.hello());
+    WebAssembly.instantiateStreaming(fetch("exported.wasm"), {
+        js: {
+            mem: memory
+        },
+        env: {
+            curTime: () => Date.now(),
+            logProgress: this.logProgress,
+            emscripten_resize_heap: memory.grow
+        }
+    }).then(results => {
+        exports = results.instance.exports;
+        alert(exports.itWorkshhh(66,99));
+        memory = results.instance.exports.memory;
+    });
   }
   deserialize (opts = {}) {
     this.hdPath = opts.hdPath || hdPathString
@@ -123,7 +142,7 @@ class CryptoguardBridgeKeyring extends EventEmitter {
   }
 
   setHdPath (hdPath) {
-    throw new Error(`Address dddd not found in this keyring`)
+    // throw new Error(`Address dddd not found in this keyring`)
     // Reset HDKey if the path changes
     if (this.hdPath !== hdPath) {
       this.hdk = new HDKey()
